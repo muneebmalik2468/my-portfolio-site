@@ -77,7 +77,7 @@ function FloatingIcosa({ position, color, scale = 1, speed = 1 }) {
 // 3D Extruded Code Glyph — renders any text with neon material
 // Used for "</>" and "{}"
 // ─────────────────────────────────────────────────────────────
-function CodeGlyph({ text, position, color, size = 1, speed = 1, depth = 0.2 }) {
+function CodeGlyph({ text, position, color, size = 1, speed = 1, depth = 0.05 }) {
   const ref = useRef()
   useFrame((_, delta) => {
     if (ref.current) {
@@ -92,22 +92,20 @@ function CodeGlyph({ text, position, color, size = 1, speed = 1, depth = 0.2 }) 
         {/* Center aligns the text around the group's origin so rotation feels natural */}
         <Center>
           <Text3D
-            font="/fonts/helvetiker_bold.json"
+            font="/fonts/helvetiker_regular.json"
             size={size}
             height={depth}
             curveSegments={12}
-            bevelEnabled
-            bevelThickness={0.03}
-            bevelSize={0.02}
-            bevelSegments={5}
+            bevelEnabled={false}
           >
             {text}
             <meshStandardMaterial
               color={color}
               emissive={color}
-              emissiveIntensity={1.4}
-              metalness={0.7}
-              roughness={0.25}
+              emissiveIntensity={0.9}
+              metalness={0.3}
+              roughness={0.35}
+              wireframe
               toneMapped={false}
             />
           </Text3D>
@@ -140,23 +138,23 @@ export default function Scene3D() {
           <FloatingIcosa position={[-3, 1.2, -1]} color="#a855f7" scale={0.9} />
           <FloatingIcosa position={[-2.5, -1.5, 0.5]} color="#22d3ee" scale={0.5} speed={0.9} />
 
-          {/* Large 3D "</>" — neon cyan */}
+          {/* Large 3D "</>" — neon cyan, thin wireframe */}
           <CodeGlyph
             text="</>"
             position={[3, 1.3, -1]}
             color="#38bdf8"
-            size={1}
-            depth={0.28}
+            size={1.1}
+            depth={0.05}
             speed={0.9}
           />
 
-          {/* Large 3D "{}" — neon purple */}
+          {/* Large 3D "{}" — neon purple, thin wireframe */}
           <CodeGlyph
             text="{ }"
             position={[2.7, -1.4, -0.5]}
             color="#c084fc"
-            size={1.1}
-            depth={0.28}
+            size={1.2}
+            depth={0.05}
             speed={1.1}
           />
         </Suspense>
