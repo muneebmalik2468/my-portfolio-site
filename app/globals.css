@@ -32,12 +32,14 @@
 
   html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
   }
 
   body {
     background: radial-gradient(ellipse at top, #1a0b2e 0%, #0a0412 40%, #000000 100%);
     color: hsl(var(--foreground));
     cursor: none;
+    overflow-x: hidden;
   }
 
   a, button, [role='button'] {

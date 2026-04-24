@@ -1,11 +1,12 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 import dynamic from 'next/dynamic'
 import {
   Github, Linkedin, Twitter, Mail, ArrowRight, ArrowDown, Download, ExternalLink,
   Code2, Database, Cloud, Cpu, Layers, Palette, Server, Zap, Send,
-  Briefcase, GraduationCap, Sparkles, Volume2, VolumeX, MapPin, Award
+  Briefcase, GraduationCap, Sparkles, Volume2, VolumeX, MapPin, Award,
+  Menu, X
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -145,7 +146,7 @@ const SOCIALS = [
   { icon: Github, href: 'https://github.com', label: 'GitHub' },
   { icon: Linkedin, href: 'https://linkedin.com', label: 'LinkedIn' },
   { icon: Twitter, href: 'https://twitter.com', label: 'Twitter' },
-  { icon: Mail, href: 'mailto:hello@alexcarter.dev', label: 'Email' },
+  { icon: Mail, href: 'mailto:muneebmalik2468@gmail.com', label: 'Email' },
 ]
 
 // ====== HELPERS ======
@@ -175,6 +176,7 @@ const SectionTitle = ({ eyebrow, title, subtitle }) => (
 function App() {
   const [muted, setMuted] = useState(true)
   const [active, setActive] = useState('home')
+  const [menuOpen, setMenuOpen] = useState(false)
   const [formState, setFormState] = useState({ name: '', email: '', message: '' })
   const [sent, setSent] = useState(false)
   const heroRef = useRef(null)
@@ -223,14 +225,14 @@ function App() {
         initial={{ y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.6, duration: 0.7 }}
-        className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-5xl"
+        className="fixed top-4 inset-x-0 z-50 w-[95%] max-w-5xl mx-auto"
       >
         <div className="glass-strong rounded-full px-4 md:px-6 py-3 flex items-center justify-between">
           <a href="#home" className="flex items-center gap-2 group">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-cyan-400 flex items-center justify-center text-sm font-bold neon-glow">
-              AC
+              MM
             </div>
-            <span className="hidden sm:block font-bold tracking-wide text-sm">Alex Carter</span>
+            <span className="hidden sm:block font-bold tracking-wide text-sm">Muneeb Malik</span>
           </a>
           <div className="hidden md:flex items-center gap-1">
             {NAV.map((n) => (
@@ -255,14 +257,82 @@ function App() {
             >
               {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
             </button>
-            <a href="#contact" className="hidden sm:block">
+            <a href="#contact" className="hidden sm:hidden md:block">
               <Button size="sm" className="bg-gradient-to-r from-purple-600 to-cyan-500 hover:opacity-90 border-0 rounded-full text-xs font-semibold neon-glow-hover">
                 Hire Me
               </Button>
             </a>
+            {/* Hamburger (mobile + tablet) */}
+            <button
+              onClick={() => setMenuOpen((o) => !o)}
+              className="md:hidden w-9 h-9 rounded-full glass flex items-center justify-center hover:border-cyan-400 transition-colors cursor-hover"
+              aria-label="Toggle menu"
+              aria-expanded={menuOpen}
+            >
+              {menuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+            </button>
           </div>
         </div>
       </motion.nav>
+
+      {/* MOBILE MENU OVERLAY */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="fixed inset-0 z-40 md:hidden"
+          >
+            {/* Backdrop */}
+            <div
+              className="absolute inset-0 bg-black/70 backdrop-blur-md"
+              onClick={() => setMenuOpen(false)}
+            />
+            {/* Panel */}
+            <motion.div
+              initial={{ y: -24, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -24, opacity: 0 }}
+              transition={{ duration: 0.3, ease: 'easeOut' }}
+              className="absolute top-20 inset-x-0 mx-auto w-[92%] max-w-sm glass-strong rounded-3xl p-4 border border-purple-400/30"
+              style={{ boxShadow: '0 0 40px rgba(168,85,247,0.25)' }}
+            >
+              <div className="flex flex-col gap-1">
+                {NAV.map((n, i) => (
+                  <motion.a
+                    key={n.href}
+                    href={n.href}
+                    onClick={() => setMenuOpen(false)}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.05 + i * 0.04 }}
+                    className={`flex items-center justify-between px-4 py-3 rounded-2xl text-sm font-medium transition-all ${
+                      active === n.href.slice(1)
+                        ? 'text-white bg-gradient-to-r from-purple-600/40 to-cyan-500/40'
+                        : 'text-white/70 hover:text-white hover:bg-white/5'
+                    }`}
+                  >
+                    <span>{n.label}</span>
+                    <ArrowRight className="w-4 h-4 opacity-60" />
+                  </motion.a>
+                ))}
+                <motion.a
+                  href="#contact"
+                  onClick={() => setMenuOpen(false)}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="mt-3 w-full flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-cyan-500 rounded-2xl py-3 font-semibold text-sm neon-glow-hover"
+                >
+                  Hire Me <Send className="w-4 h-4" />
+                </motion.a>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ======================= HERO ======================= */}
       {/* pt-32 (mobile) / pt-36 (desktop) ensures the fixed navbar (~76px from top) never overlaps hero content */}
@@ -291,8 +361,8 @@ function App() {
             transition={{ delay: 1.4, duration: 0.9 }}
             className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-bold leading-[0.95] tracking-tight"
           >
-            <span className="block text-white text-glow">ALEX</span>
-            <span className="block text-gradient animate-gradient">CARTER</span>
+            <span className="block text-white text-glow">MUNEEB</span>
+            <span className="block text-gradient animate-gradient">MALIK</span>
           </motion.h1>
 
           <motion.div
@@ -562,7 +632,7 @@ function App() {
                 <div className="space-y-3">
                   <div className="flex items-center gap-3 text-sm">
                     <div className="w-9 h-9 rounded-lg glass flex items-center justify-center"><Mail className="w-4 h-4 text-cyan-300" /></div>
-                    <span className="text-white/80">hello@alexcarter.dev</span>
+                    <span className="text-white/80">muneebmalik2468@gmail.com</span>
                   </div>
                   <div className="flex items-center gap-3 text-sm">
                     <div className="w-9 h-9 rounded-lg glass flex items-center justify-center"><MapPin className="w-4 h-4 text-purple-300" /></div>
@@ -659,9 +729,9 @@ function App() {
       <footer className="relative z-10 border-t border-white/5 py-10 px-6">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-cyan-400 flex items-center justify-center text-sm font-bold">AC</div>
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-cyan-400 flex items-center justify-center text-sm font-bold">MM</div>
             <div>
-              <div className="font-bold text-sm">Alex Carter</div>
+              <div className="font-bold text-sm">Muneeb Malik</div>
               <div className="text-xs text-white/40 font-mono">Full Stack Developer</div>
             </div>
           </div>
