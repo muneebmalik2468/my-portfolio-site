@@ -142,11 +142,23 @@ const TIMELINE = [
   },
 ]
 
+// Upwork icon (lucide doesn't ship one) — inline SVG that matches the stroke style
+const UpworkIcon = (props) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
+    <path d="M18.56 5.56c-2.3 0-4.14 1.5-4.88 3.88-1.12-1.64-1.96-3.6-2.45-5.44H8.16v6.62c-.01 1.3-1.06 2.35-2.36 2.35S3.43 11.92 3.44 10.62V4H1v6.62C1 13.28 3.16 15.47 5.8 15.47c2.64 0 4.8-2.19 4.8-4.85v-1.1c.46.89.98 1.79 1.61 2.57l-1.38 6.44h2.5l.99-4.65c.88.56 1.89.89 2.95.89C21.02 14.78 23 12.75 23 10.25c0-2.56-1.98-4.69-4.44-4.69zm0 6.85c-1.25 0-2.44-.55-3.38-1.41l.24-.96.01-.04c.21-1.22 1-3.18 3.13-3.18 1.25 0 2.26 1.04 2.26 2.32.01 1.28-1 2.27-2.26 2.27z" />
+  </svg>
+)
+
 const SOCIALS = [
   { icon: Github, href: 'https://github.com', label: 'GitHub' },
   { icon: Linkedin, href: 'https://linkedin.com', label: 'LinkedIn' },
-  // { icon: Twitter, href: 'https://twitter.com', label: 'Twitter' },
-  // { icon: Upwork, href: 'https://upwork.com', label: 'Upwork' },
+  { icon: Twitter, href: 'https://twitter.com', label: 'Twitter' },
+  { icon: UpworkIcon, href: 'https://www.upwork.com', label: 'Upwork' },
   { icon: Mail, href: 'mailto:muneebmalik2468@gmail.com', label: 'Email' },
 ]
 
@@ -179,7 +191,6 @@ function App() {
   const [active, setActive] = useState('home')
   const [menuOpen, setMenuOpen] = useState(false)
   const [formState, setFormState] = useState({ name: '', email: '', message: '' })
-  const [sent, setSent] = useState(false)
   const heroRef = useRef(null)
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
   const heroY = useTransform(scrollYProgress, [0, 1], [0, 200])
@@ -203,13 +214,91 @@ function App() {
     return () => obs.disconnect()
   }, [])
 
-  const handleSubmit = (e) => {
+  // UI sound effects (Web Audio API, no external files) — only active when unmuted
+  useEffect(() => {
+    if (muted) return
+    if (typeof window === 'undefined') return
+    const Ctx = window.AudioContext || window.webkitAudioContext
+    if (!Ctx) return
+    const ctx = new Ctx()
+
+    const blip = (freq, type = 'sine', dur = 0.08, vol = 0.06) => {
+      try {
+        if (ctx.state === 'suspended') ctx.resume()
+        const o = ctx.createOscillator()
+        const g = ctx.createGain()
+        o.type = type
+        o.frequency.value = freq
+        g.gain.value = 0
+        const t = ctx.currentTime
+        g.gain.linearRampToValueAtTime(vol, t + 0.005)
+        g.gain.exponentialRampToValueAtTime(0.0001, t + dur)
+        o.connect(g).connect(ctx.destination)
+        o.start(t)
+        o.stop(t + dur)
+      } catch (_) {}
+    }
+
+    const onClick = (e) => {
+      if (e.target.closest('a, button, [role="button"]')) blip(880, 'triangle', 0.12, 0.08)
+    }
+    const onOver = (e) => {
+      const el = e.target.closest('a, button, [role="button"]')
+      if (!el || el.__sfx) return
+      el.__sfx = true
+      blip(1500, 'sine', 0.05, 0.025)
+      setTimeout(() => { el.__sfx = false }, 260)
+    }
+
+    window.addEventListener('click', onClick)
+    window.addEventListener('mouseover', onOver)
+    // A subtle ping when sound is first enabled so users know it's working
+    blip(660, 'sine', 0.18, 0.05)
+    setTimeout(() => blip(990, 'sine', 0.18, 0.05), 120)
+
+    return () => {
+      window.removeEventListener('click', onClick)
+      window.removeEventListener('mouseover', onOver)
+      try { ctx.close() } catch (_) {}
+    }
+  }, [muted])
+
+  const [status, setStatus] = useState('idle') // 'idle' | 'sending' | 'sent' | 'error'
+  const [errorMsg, setErrorMsg] = useState('')
+
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    setSent(true)
-    setTimeout(() => {
-      setSent(false)
-      setFormState({ name: '', email: '', message: '' })
-    }, 3200)
+    setStatus('sending')
+    setErrorMsg('')
+    try {
+      const res = await fetch('https://formsubmit.co/ajax/muneebmalik2468@gmail.com', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          name: formState.name,
+          email: formState.email,
+          message: formState.message,
+          _subject: `New portfolio contact from ${formState.name}`,
+          _template: 'table',
+          _captcha: 'false',
+        }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (res.ok && (data.success === 'true' || data.success === true)) {
+        setStatus('sent')
+        setFormState({ name: '', email: '', message: '' })
+        setTimeout(() => setStatus('idle'), 5000)
+      } else {
+        throw new Error(data.message || 'Could not send message. Please try again.')
+      }
+    } catch (err) {
+      setStatus('error')
+      setErrorMsg(err.message || 'Network error — please try again.')
+      setTimeout(() => setStatus('idle'), 5000)
+    }
   }
 
   return (
@@ -475,9 +564,15 @@ function App() {
                   <div className="flex items-center gap-2 text-xs text-purple-300 mt-5 font-mono">
                     <MapPin className="w-3.5 h-3.5" /> San Francisco, CA — Remote-friendly
                   </div>
-                  <Button variant="outline" className="mt-6 w-full rounded-full border-purple-400/40 bg-white/5 hover:bg-white/10">
-                    <Download className="w-4 h-4 mr-2" /> Download Resume
-                  </Button>
+                  <a
+                    href="/resume.pdf"
+                    download="Muneeb-Malik-Resume.pdf"
+                    className="mt-6 block"
+                  >
+                    <Button variant="outline" className="w-full rounded-full border-purple-400/40 bg-white/5 hover:bg-white/10 pointer-events-none">
+                      <Download className="w-4 h-4 mr-2" /> Download Resume
+                    </Button>
+                  </a>
                 </div>
               </div>
             </motion.div>
@@ -707,20 +802,45 @@ function App() {
               </div>
               <Button
                 type="submit"
-                disabled={sent}
-                className="w-full h-12 rounded-xl bg-gradient-to-r from-purple-600 to-cyan-500 hover:opacity-95 border-0 font-semibold text-base neon-glow-hover"
+                disabled={status === 'sending' || status === 'sent'}
+                className="w-full h-12 rounded-xl bg-gradient-to-r from-purple-600 to-cyan-500 hover:opacity-95 border-0 font-semibold text-base neon-glow-hover disabled:opacity-80"
               >
-                {sent ? (
+                {status === 'sending' && (
                   <span className="flex items-center gap-2">
-                    <motion.span animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }} className="inline-block">✨</motion.span>
-                    Message Sent Successfully
+                    <motion.span
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                      className="inline-block w-4 h-4 border-2 border-white/40 border-t-white rounded-full"
+                    />
+                    Sending...
                   </span>
-                ) : (
+                )}
+                {status === 'sent' && (
+                  <span className="flex items-center gap-2">
+                    <Sparkles className="w-4 h-4" />
+                    Message delivered — I&apos;ll reply within 24h
+                  </span>
+                )}
+                {status === 'error' && (
+                  <span className="flex items-center gap-2 text-white">
+                    <X className="w-4 h-4" />
+                    Failed — try again
+                  </span>
+                )}
+                {status === 'idle' && (
                   <span className="flex items-center gap-2">
                     Send Message <Send className="w-4 h-4" />
                   </span>
                 )}
               </Button>
+              {status === 'error' && errorMsg && (
+                <p className="text-xs text-red-300/80 text-center -mt-2">{errorMsg}</p>
+              )}
+              {status === 'sent' && (
+                <p className="text-xs text-cyan-300/80 text-center -mt-2">
+                  Thanks! Your message is on its way.
+                </p>
+              )}
             </motion.form>
           </div>
         </div>
