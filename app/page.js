@@ -191,7 +191,6 @@ function App() {
   const [active, setActive] = useState('home')
   const [menuOpen, setMenuOpen] = useState(false)
   const [formState, setFormState] = useState({ name: '', email: '', message: '' })
-  const [sent, setSent] = useState(false)
   const heroRef = useRef(null)
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
   const heroY = useTransform(scrollYProgress, [0, 1], [0, 200])
@@ -264,13 +263,42 @@ function App() {
     }
   }, [muted])
 
-  const handleSubmit = (e) => {
+  const [status, setStatus] = useState('idle') // 'idle' | 'sending' | 'sent' | 'error'
+  const [errorMsg, setErrorMsg] = useState('')
+
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    setSent(true)
-    setTimeout(() => {
-      setSent(false)
-      setFormState({ name: '', email: '', message: '' })
-    }, 3200)
+    setStatus('sending')
+    setErrorMsg('')
+    try {
+      const res = await fetch('https://formsubmit.co/ajax/muneebmalik2468@gmail.com', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          name: formState.name,
+          email: formState.email,
+          message: formState.message,
+          _subject: `New portfolio contact from ${formState.name}`,
+          _template: 'table',
+          _captcha: 'false',
+        }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (res.ok && (data.success === 'true' || data.success === true)) {
+        setStatus('sent')
+        setFormState({ name: '', email: '', message: '' })
+        setTimeout(() => setStatus('idle'), 5000)
+      } else {
+        throw new Error(data.message || 'Could not send message. Please try again.')
+      }
+    } catch (err) {
+      setStatus('error')
+      setErrorMsg(err.message || 'Network error — please try again.')
+      setTimeout(() => setStatus('idle'), 5000)
+    }
   }
 
   return (
@@ -774,20 +802,45 @@ function App() {
               </div>
               <Button
                 type="submit"
-                disabled={sent}
-                className="w-full h-12 rounded-xl bg-gradient-to-r from-purple-600 to-cyan-500 hover:opacity-95 border-0 font-semibold text-base neon-glow-hover"
+                disabled={status === 'sending' || status === 'sent'}
+                className="w-full h-12 rounded-xl bg-gradient-to-r from-purple-600 to-cyan-500 hover:opacity-95 border-0 font-semibold text-base neon-glow-hover disabled:opacity-80"
               >
-                {sent ? (
+                {status === 'sending' && (
                   <span className="flex items-center gap-2">
-                    <motion.span animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }} className="inline-block">✨</motion.span>
-                    Message Sent Successfully
+                    <motion.span
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                      className="inline-block w-4 h-4 border-2 border-white/40 border-t-white rounded-full"
+                    />
+                    Sending...
                   </span>
-                ) : (
+                )}
+                {status === 'sent' && (
+                  <span className="flex items-center gap-2">
+                    <Sparkles className="w-4 h-4" />
+                    Message delivered — I&apos;ll reply within 24h
+                  </span>
+                )}
+                {status === 'error' && (
+                  <span className="flex items-center gap-2 text-white">
+                    <X className="w-4 h-4" />
+                    Failed — try again
+                  </span>
+                )}
+                {status === 'idle' && (
                   <span className="flex items-center gap-2">
                     Send Message <Send className="w-4 h-4" />
                   </span>
                 )}
               </Button>
+              {status === 'error' && errorMsg && (
+                <p className="text-xs text-red-300/80 text-center -mt-2">{errorMsg}</p>
+              )}
+              {status === 'sent' && (
+                <p className="text-xs text-cyan-300/80 text-center -mt-2">
+                  Thanks! Your message is on its way.
+                </p>
+              )}
             </motion.form>
           </div>
         </div>
