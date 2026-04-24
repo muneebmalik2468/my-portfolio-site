@@ -13,8 +13,12 @@ export const metadata = {
     description: 'Futuristic 3D portfolio showcasing modern web development.',
     type: 'website',
   },
-  viewport: 'width=device-width, initial-scale=1',
+  // viewport: 'width=device-width, initial-scale=1',
 }
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
 
 export default function RootLayout({ children }) {
   return (

@@ -49,7 +49,7 @@ export default function LoadingScreen() {
                 transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
               />
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-2xl font-bold text-gradient">AC</span>
+                <span className="text-2xl font-bold text-gradient">MM</span>
               </div>
             </div>
 

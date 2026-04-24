@@ -145,7 +145,8 @@ const TIMELINE = [
 const SOCIALS = [
   { icon: Github, href: 'https://github.com', label: 'GitHub' },
   { icon: Linkedin, href: 'https://linkedin.com', label: 'LinkedIn' },
-  { icon: Twitter, href: 'https://twitter.com', label: 'Twitter' },
+  // { icon: Twitter, href: 'https://twitter.com', label: 'Twitter' },
+  // { icon: Upwork, href: 'https://upwork.com', label: 'Upwork' },
   { icon: Mail, href: 'mailto:muneebmalik2468@gmail.com', label: 'Email' },
 ]
 
@@ -461,7 +462,7 @@ function App() {
                 <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-cyan-500/20 blur-3xl rounded-full" />
                 <div className="relative">
                   <Award className="w-10 h-10 text-purple-400 mb-4" />
-                  <h3 className="text-2xl font-bold mb-4">Hello, I&apos;m Alex</h3>
+                  <h3 className="text-2xl font-bold mb-4">Hello, I&apos;m Muneeb</h3>
                   <p className="text-white/70 leading-relaxed text-sm">
                     A full-stack engineer with <span className="text-cyan-300 font-semibold">6+ years</span> shipping production systems
                     for startups and Fortune 500s. I&apos;m obsessed with the craft — from architecting distributed
