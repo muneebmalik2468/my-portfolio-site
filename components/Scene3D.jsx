@@ -1,5 +1,5 @@
 'use client'
-import { Canvas, useFrame } from '@react-three/fiber'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Float, Icosahedron, Points, PointMaterial, Text3D, Center } from '@react-three/drei'
 import { useRef, useMemo, Suspense } from 'react'
 import * as THREE from 'three'
@@ -45,7 +45,7 @@ function ParticleField() {
 }
 
 // ─────────────────────────────────────────────────────────────
-// Floating Icosahedron (kept)
+// Floating Icosahedron
 // ─────────────────────────────────────────────────────────────
 function FloatingIcosa({ position, color, scale = 1, speed = 1 }) {
   const ref = useRef()
@@ -74,8 +74,7 @@ function FloatingIcosa({ position, color, scale = 1, speed = 1 }) {
 }
 
 // ─────────────────────────────────────────────────────────────
-// 3D Extruded Code Glyph — renders any text with neon material
-// Used for "</>" and "{}"
+// 3D Extruded Code Glyph — thin wireframe "</>" / "{}"
 // ─────────────────────────────────────────────────────────────
 function CodeGlyph({ text, position, color, size = 1, speed = 1, depth = 0.05 }) {
   const ref = useRef()
@@ -89,7 +88,6 @@ function CodeGlyph({ text, position, color, size = 1, speed = 1, depth = 0.05 })
   return (
     <Float speed={1.2} rotationIntensity={0.4} floatIntensity={1.8}>
       <group ref={ref} position={position}>
-        {/* Center aligns the text around the group's origin so rotation feels natural */}
         <Center>
           <Text3D
             font="/fonts/helvetiker_regular.json"
@@ -116,7 +114,70 @@ function CodeGlyph({ text, position, color, size = 1, speed = 1, depth = 0.05 })
 }
 
 // ─────────────────────────────────────────────────────────────
-// Scene
+// Responsive scene content — adjusts positions/scales per viewport
+// so shapes peek in from the edges on small screens.
+// ─────────────────────────────────────────────────────────────
+function SceneContent() {
+  const { size } = useThree()
+  const isMobile = size.width < 640
+  const isTablet = size.width >= 640 && size.width < 1024
+
+  // Overall multiplier that squeezes the layout horizontally on smaller viewports.
+  // On mobile we pull shapes well inside the narrow portrait frustum so a visible chunk
+  // of each shape peeks into view (rather than sitting just beyond the edge).
+  const layout = isMobile
+    ? { x: 0.48, scale: 0.5, glyphSize: 0.55 }
+    : isTablet
+    ? { x: 0.82, scale: 0.75, glyphSize: 0.85 }
+    : { x: 1, scale: 1, glyphSize: 1.1 }
+
+  return (
+    <>
+      <ambientLight intensity={0.4} />
+      <pointLight position={[5, 5, 5]} intensity={1.3} color="#a855f7" />
+      <pointLight position={[-5, -5, -5]} intensity={1.1} color="#38bdf8" />
+      <pointLight position={[0, 0, 4]} intensity={0.6} color="#ffffff" />
+
+      <ParticleField />
+
+      {/* Two wireframe icosahedrons */}
+      <FloatingIcosa
+        position={[-3 * layout.x, 1.2, -1]}
+        color="#a855f7"
+        scale={0.9 * layout.scale}
+      />
+      <FloatingIcosa
+        position={[-2.5 * layout.x, -1.5, 0.5]}
+        color="#22d3ee"
+        scale={0.5 * layout.scale}
+        speed={0.9}
+      />
+
+      {/* Large 3D "</>" — neon cyan */}
+      <CodeGlyph
+        text="</>"
+        position={[3 * layout.x, 1.3, -1]}
+        color="#38bdf8"
+        size={layout.glyphSize}
+        depth={0.05}
+        speed={0.9}
+      />
+
+      {/* Large 3D "{}" — neon purple */}
+      <CodeGlyph
+        text="{ }"
+        position={[2.7 * layout.x, -1.4, -0.5]}
+        color="#c084fc"
+        size={layout.glyphSize * 1.1}
+        depth={0.05}
+        speed={1.1}
+      />
+    </>
+  )
+}
+
+// ─────────────────────────────────────────────────────────────
+// Scene root
 // ─────────────────────────────────────────────────────────────
 export default function Scene3D() {
   return (
@@ -127,36 +188,7 @@ export default function Scene3D() {
         gl={{ antialias: true, alpha: true }}
       >
         <Suspense fallback={null}>
-          <ambientLight intensity={0.4} />
-          <pointLight position={[5, 5, 5]} intensity={1.3} color="#a855f7" />
-          <pointLight position={[-5, -5, -5]} intensity={1.1} color="#38bdf8" />
-          <pointLight position={[0, 0, 4]} intensity={0.6} color="#ffffff" />
-
-          <ParticleField />
-
-          {/* Kept: two wireframe icosahedrons */}
-          <FloatingIcosa position={[-3, 1.2, -1]} color="#a855f7" scale={0.9} />
-          <FloatingIcosa position={[-2.5, -1.5, 0.5]} color="#22d3ee" scale={0.5} speed={0.9} />
-
-          {/* Large 3D "</>" — neon cyan, thin wireframe */}
-          <CodeGlyph
-            text="</>"
-            position={[3, 1.3, -1]}
-            color="#38bdf8"
-            size={1.1}
-            depth={0.05}
-            speed={0.9}
-          />
-
-          {/* Large 3D "{}" — neon purple, thin wireframe */}
-          <CodeGlyph
-            text="{ }"
-            position={[2.7, -1.4, -0.5]}
-            color="#c084fc"
-            size={1.2}
-            depth={0.05}
-            speed={1.1}
-          />
+          <SceneContent />
         </Suspense>
       </Canvas>
     </div>
