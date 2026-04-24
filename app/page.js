@@ -38,22 +38,24 @@ const SKILLS = [
 ]
 
 const STACK = [
-  { name: 'React', color: '#61DAFB' },
-  { name: 'Next.js', color: '#ffffff' },
-  { name: 'TypeScript', color: '#3178C6' },
-  { name: 'Node.js', color: '#8CC84B' },
-  { name: 'Python', color: '#FFD43B' },
-  { name: 'PostgreSQL', color: '#4f8fd8' },
-  { name: 'MongoDB', color: '#47A248' },
-  { name: 'GraphQL', color: '#E10098' },
-  { name: 'Docker', color: '#2496ED' },
-  { name: 'AWS', color: '#FF9900' },
-  { name: 'Redis', color: '#DC382D' },
-  { name: 'Tailwind', color: '#38BDF8' },
-  { name: 'Three.js', color: '#c084fc' },
-  { name: 'Rust', color: '#F74C00' },
-  { name: 'Kubernetes', color: '#326CE5' },
-  { name: 'Go', color: '#00ADD8' },
+  { name: 'Next.js', level: 'Proficient', color: '#ffffff' },
+  { name: 'React', level: 'Experienced', color: '#61DAFB' },
+  { name: 'TypeScript', level: 'Experienced', color: '#3178C6' },
+  { name: 'JavaScript', level: 'Skilled', color: '#f7bd00' },
+  { name: 'Laravel', level: 'Proficient', color: '#ed2450' },
+  { name: 'Express.js', level: 'Experienced', color: '#c85e4b' },
+  { name: 'Django', level: 'Skilled', color: '#7dc84b' },
+  { name: 'Node.js', level: 'Experienced', color: '#8CC84B' },
+  { name: 'PHP', level: 'Experienced', color: '#2496ED' },
+  { name: 'Python', level: 'Skilled', color: '#FFD43B' },
+  { name: 'PostgreSQL', level: 'Skilled', color: '#4f8fd8' },
+  { name: 'MongoDB', level: 'Proficient', color: '#47A248' },
+  { name: 'MySQL', level: 'Proficient', color: '#E10098' },
+  { name: 'SupaBase', level: 'Skilled', color: '#00b336' },
+  { name: 'AWS', level: 'Skilled', color: '#FF9900' },
+  { name: 'Tailwind', level: 'Proficient', color: '#38BDF8' },
+  { name: 'Filament', level: 'Experienced', color: '#c084fc' },
+  { name: 'WordPress', level: 'Experienced', color: '#84c6fc' },
 ]
 
 const PROJECTS = [
@@ -109,35 +111,35 @@ const PROJECTS = [
 
 const TIMELINE = [
   {
-    year: '2024 — Present',
-    role: 'Principal Full Stack Engineer',
-    org: 'Nebula Labs',
+    year: '2025 — Present',
+    role: 'Full Stack Engineer',
+    org: 'Freelancer',
     location: 'Remote',
-    desc: 'Leading architecture for a real-time AI collaboration platform. Built custom inference orchestration reducing latency by 68%.',
+    desc: 'Working with clients to design and build full-stack web applications, focusing on responsive UI, API integration, and performance optimization.',
     icon: Briefcase,
   },
   {
-    year: '2022 — 2024',
-    role: 'Senior Software Engineer',
-    org: 'Quantum Dynamics',
-    location: 'San Francisco, CA',
-    desc: 'Scaled commerce infrastructure from 500K to 10M daily requests. Shipped event-driven microservices on Kubernetes.',
+    year: '2024 — 2025',
+    role: 'Software Engineer',
+    org: 'Creative Frontiers',
+    location: 'Lahore, PK',
+    desc: 'Contributed to the development and maintenance of web applications, improving performance and fixing production issues. Assisted in building backend services, automation, and integrating APIs.',
     icon: Code2,
   },
   {
-    year: '2020 — 2022',
+    year: '2022 — 2024',
     role: 'Full Stack Developer',
-    org: 'Pixel Forge Studios',
-    location: 'New York, NY',
-    desc: 'Built interactive WebGL experiences for Fortune 500 clients. Pioneered the studio Three.js + React component library.',
+    org: 'IT Solutions',
+    location: 'Lahore, PK',
+    desc: 'Built and maintained web applications using modern frameworks. Developed responsive user interfaces, implemented backend functionality, and worked on real-world projects to strengthen full-stack development skills.',
     icon: Sparkles,
   },
   {
-    year: '2018 — 2020',
+    year: '2021 — 2024',
     role: 'B.S. Computer Science',
-    org: 'MIT',
-    location: 'Cambridge, MA',
-    desc: 'Graduated summa cum laude. Research in distributed systems and real-time rendering. Published in IEEE.',
+    org: 'RIU',
+    location: 'Riphah International University, Lahore',
+    desc: "Completed a Bachelor's degree in Computer Science with a focus on software development, databases, and web technologies.",
     icon: GraduationCap,
   },
 ]
@@ -155,10 +157,10 @@ const UpworkIcon = (props) => (
 )
 
 const SOCIALS = [
-  { icon: Github, href: 'https://github.com', label: 'GitHub' },
-  { icon: Linkedin, href: 'https://linkedin.com', label: 'LinkedIn' },
-  { icon: Twitter, href: 'https://twitter.com', label: 'Twitter' },
-  { icon: UpworkIcon, href: 'https://www.upwork.com', label: 'Upwork' },
+  { icon: Github, href: 'https://github.com/muneebmalik2468', label: 'GitHub' },
+  { icon: Linkedin, href: 'https://www.linkedin.com/in/muneeb-khalid-🇵🇰-651885220?utm_source=share_via&utm_content=profile&utm_medium=member_ios', label: 'LinkedIn' },
+  // { icon: Twitter, href: 'https://twitter.com', label: 'Twitter' },
+  { icon: UpworkIcon, href: 'https://www.upwork.com/freelancers/~0179adfb3aa18ebc66?companyReference=1972954848547794128&mp_source=share', label: 'Upwork' },
   { icon: Mail, href: 'mailto:muneebmalik2468@gmail.com', label: 'Email' },
 ]
 
@@ -648,7 +650,7 @@ function App() {
                 </div>
                 <div className="relative">
                   <div className="font-semibold text-sm">{t.name}</div>
-                  <div className="text-[10px] text-white/40 font-mono uppercase tracking-wider">Expert</div>
+                  <div className="text-[10px] text-white/40 font-mono uppercase tracking-wider">{t.level}</div>
                 </div>
               </motion.div>
             ))}
@@ -732,7 +734,7 @@ function App() {
                   </div>
                   <div className="flex items-center gap-3 text-sm">
                     <div className="w-9 h-9 rounded-lg glass flex items-center justify-center"><MapPin className="w-4 h-4 text-purple-300" /></div>
-                    <span className="text-white/80">San Francisco, CA</span>
+                    <span className="text-white/80">Lahore, PK</span>
                   </div>
                   <div className="flex items-center gap-3 text-sm">
                     <div className="w-9 h-9 rounded-lg glass flex items-center justify-center"><Zap className="w-4 h-4 text-yellow-300" /></div>
@@ -853,7 +855,7 @@ function App() {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-cyan-400 flex items-center justify-center text-sm font-bold">MM</div>
             <div>
               <div className="font-bold text-sm">Muneeb Malik</div>
-              <div className="text-xs text-white/40 font-mono">Full Stack Developer</div>
+              <div className="text-xs text-white/40 font-mono">Full Stack Dev / SE</div>
             </div>
           </div>
           <div className="text-xs text-white/40 font-mono">
