@@ -1,11 +1,11 @@
 'use client'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { Float, Icosahedron, Points, PointMaterial } from '@react-three/drei'
+import { Float, Icosahedron, Points, PointMaterial, Text3D, Center } from '@react-three/drei'
 import { useRef, useMemo, Suspense } from 'react'
 import * as THREE from 'three'
 
 // ─────────────────────────────────────────────────────────────
-// Background starfield (unchanged)
+// Background starfield
 // ─────────────────────────────────────────────────────────────
 function ParticleField() {
   const ref = useRef()
@@ -23,7 +23,7 @@ function ParticleField() {
     return p
   }, [])
 
-  useFrame((state, delta) => {
+  useFrame((_, delta) => {
     if (ref.current) {
       ref.current.rotation.y += delta * 0.04
       ref.current.rotation.x += delta * 0.02
@@ -45,7 +45,7 @@ function ParticleField() {
 }
 
 // ─────────────────────────────────────────────────────────────
-// Floating Icosahedron (kept as-is)
+// Floating Icosahedron (kept)
 // ─────────────────────────────────────────────────────────────
 function FloatingIcosa({ position, color, scale = 1, speed = 1 }) {
   const ref = useRef()
@@ -74,122 +74,44 @@ function FloatingIcosa({ position, color, scale = 1, speed = 1 }) {
 }
 
 // ─────────────────────────────────────────────────────────────
-// React Atom — iconic 3-ring electron orbit + glowing nucleus
+// 3D Extruded Code Glyph — renders any text with neon material
+// Used for "</>" and "{}"
 // ─────────────────────────────────────────────────────────────
-function ReactAtom({ position, scale = 1, speed = 1 }) {
+function CodeGlyph({ text, position, color, size = 1, speed = 1, depth = 0.2 }) {
   const ref = useRef()
   useFrame((_, delta) => {
     if (ref.current) {
-      ref.current.rotation.x += delta * 0.35 * speed
-      ref.current.rotation.y += delta * 0.5 * speed
-      ref.current.rotation.z += delta * 0.15 * speed
+      ref.current.rotation.y += delta * 0.35 * speed
+      ref.current.rotation.x = Math.sin(performance.now() * 0.0005 * speed) * 0.2
     }
   })
 
-  // 3 elliptical rings tilted at 0°, 60°, -60° (classic React logo orientation)
-  const ringRotations = [
-    [0, 0, 0],
-    [0, 0, Math.PI / 3],
-    [0, 0, -Math.PI / 3],
-  ]
-
   return (
-    <Float speed={1.2} rotationIntensity={0.5} floatIntensity={2}>
-      <group ref={ref} position={position} scale={scale}>
-        {/* Nucleus */}
-        <mesh>
-          <sphereGeometry args={[0.18, 24, 24]} />
-          <meshStandardMaterial
-            color="#61DAFB"
-            emissive="#61DAFB"
-            emissiveIntensity={2.2}
-            toneMapped={false}
-          />
-        </mesh>
-
-        {/* Electron orbits (flattened tori = ellipses) */}
-        {ringRotations.map((rot, i) => (
-          <mesh key={i} rotation={rot} scale={[1.1, 0.45, 1.1]}>
-            <torusGeometry args={[1, 0.045, 16, 96]} />
+    <Float speed={1.2} rotationIntensity={0.4} floatIntensity={1.8}>
+      <group ref={ref} position={position}>
+        {/* Center aligns the text around the group's origin so rotation feels natural */}
+        <Center>
+          <Text3D
+            font="/fonts/helvetiker_bold.json"
+            size={size}
+            height={depth}
+            curveSegments={12}
+            bevelEnabled
+            bevelThickness={0.03}
+            bevelSize={0.02}
+            bevelSegments={5}
+          >
+            {text}
             <meshStandardMaterial
-              color="#61DAFB"
-              emissive="#61DAFB"
+              color={color}
+              emissive={color}
               emissiveIntensity={1.4}
-              toneMapped={false}
-              metalness={0.4}
-              roughness={0.3}
-            />
-          </mesh>
-        ))}
-      </group>
-    </Float>
-  )
-}
-
-// ─────────────────────────────────────────────────────────────
-// Code Cube — wireframe "module/container" with a glowing inner core
-// Represents a code block / dev container / package
-// ─────────────────────────────────────────────────────────────
-function CodeCube({ position, scale = 1, speed = 1 }) {
-  const outerRef = useRef()
-  const innerRef = useRef()
-
-  useFrame((_, delta) => {
-    if (outerRef.current) {
-      outerRef.current.rotation.x += delta * 0.25 * speed
-      outerRef.current.rotation.y += delta * 0.3 * speed
-    }
-    if (innerRef.current) {
-      // counter-rotate the inner core for a techy mechanical feel
-      innerRef.current.rotation.x -= delta * 0.7 * speed
-      innerRef.current.rotation.y -= delta * 0.5 * speed
-      innerRef.current.rotation.z += delta * 0.3 * speed
-    }
-  })
-
-  return (
-    <Float speed={1.3} rotationIntensity={0.6} floatIntensity={1.8}>
-      <group position={position} scale={scale}>
-        {/* Outer wireframe shell */}
-        <mesh ref={outerRef}>
-          <boxGeometry args={[1.6, 1.6, 1.6]} />
-          <meshStandardMaterial
-            color="#c084fc"
-            emissive="#c084fc"
-            emissiveIntensity={0.8}
-            wireframe
-            toneMapped={false}
-          />
-        </mesh>
-
-        {/* Inner glowing core */}
-        <mesh ref={innerRef}>
-          <boxGeometry args={[0.55, 0.55, 0.55]} />
-          <meshStandardMaterial
-            color="#38bdf8"
-            emissive="#38bdf8"
-            emissiveIntensity={1.6}
-            metalness={0.6}
-            roughness={0.2}
-            toneMapped={false}
-          />
-        </mesh>
-
-        {/* 8 corner bolts — tiny nodes for extra tech detail */}
-        {[
-          [0.8, 0.8, 0.8], [-0.8, 0.8, 0.8], [0.8, -0.8, 0.8], [-0.8, -0.8, 0.8],
-          [0.8, 0.8, -0.8], [-0.8, 0.8, -0.8], [0.8, -0.8, -0.8], [-0.8, -0.8, -0.8],
-        ].map((p, i) => (
-          <mesh key={i} position={p}>
-            <sphereGeometry args={[0.06, 8, 8]} />
-            <meshStandardMaterial
-              color="#38bdf8"
-              emissive="#38bdf8"
-              emissiveIntensity={2}
+              metalness={0.7}
+              roughness={0.25}
               toneMapped={false}
             />
-          </mesh>
-        ))}
+          </Text3D>
+        </Center>
       </group>
     </Float>
   )
@@ -208,20 +130,35 @@ export default function Scene3D() {
       >
         <Suspense fallback={null}>
           <ambientLight intensity={0.4} />
-          <pointLight position={[5, 5, 5]} intensity={1.2} color="#a855f7" />
-          <pointLight position={[-5, -5, -5]} intensity={1} color="#38bdf8" />
+          <pointLight position={[5, 5, 5]} intensity={1.3} color="#a855f7" />
+          <pointLight position={[-5, -5, -5]} intensity={1.1} color="#38bdf8" />
+          <pointLight position={[0, 0, 4]} intensity={0.6} color="#ffffff" />
 
           <ParticleField />
 
-          {/* Kept: two icosahedrons */}
+          {/* Kept: two wireframe icosahedrons */}
           <FloatingIcosa position={[-3, 1.2, -1]} color="#a855f7" scale={0.9} />
           <FloatingIcosa position={[-2.5, -1.5, 0.5]} color="#22d3ee" scale={0.5} speed={0.9} />
 
-          {/* NEW: React atom (replaces the torus) */}
-          <ReactAtom position={[3, -1, -2]} scale={0.85} speed={0.9} />
+          {/* Large 3D "</>" — neon cyan */}
+          <CodeGlyph
+            text="</>"
+            position={[3, 1.3, -1]}
+            color="#38bdf8"
+            size={1}
+            depth={0.28}
+            speed={0.9}
+          />
 
-          {/* NEW: Code cube (replaces the torus-knot) */}
-          <CodeCube position={[2.5, 2, 0]} scale={0.55} speed={1.1} />
+          {/* Large 3D "{}" — neon purple */}
+          <CodeGlyph
+            text="{ }"
+            position={[2.7, -1.4, -0.5]}
+            color="#c084fc"
+            size={1.1}
+            depth={0.28}
+            speed={1.1}
+          />
         </Suspense>
       </Canvas>
     </div>
