@@ -265,7 +265,8 @@ function App() {
       </motion.nav>
 
       {/* ======================= HERO ======================= */}
-      <section id="home" ref={heroRef} className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* pt-32 (mobile) / pt-36 (desktop) ensures the fixed navbar (~76px from top) never overlaps hero content */}
+      <section id="home" ref={heroRef} className="relative min-h-screen flex items-center justify-center overflow-hidden pt-32 md:pt-36 pb-16">
         <Scene3D />
         <motion.div
           style={{ y: heroY, opacity: heroOpacity }}
