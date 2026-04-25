@@ -29,12 +29,12 @@ const NAV = [
 ]
 
 const SKILLS = [
-  { name: 'Frontend Development', level: 95, icon: Palette },
-  { name: 'Backend Engineering', level: 92, icon: Server },
-  { name: 'Cloud & DevOps', level: 85, icon: Cloud },
-  { name: 'Database Design', level: 88, icon: Database },
-  { name: 'System Architecture', level: 90, icon: Cpu },
-  { name: 'UI / UX Engineering', level: 87, icon: Layers },
+  { name: 'Frontend Development', level: 88, icon: Palette },
+  { name: 'Backend Engineering', level: 93, icon: Server },
+  { name: 'Database Design', level: 85, icon: Database },
+  { name: 'Cloud & Deployment', level: 82, icon: Cloud },
+  { name: 'System Architecture', level: 84, icon: Cpu },
+  { name: 'Performance & Security', level: 86, icon: Layers },
 ]
 
 const STACK = [
@@ -60,52 +60,58 @@ const STACK = [
 
 const PROJECTS = [
   {
-    title: 'NeuroSync AI',
+    title: 'Client Pitcher',
     tag: 'AI Platform',
-    desc: 'Real-time collaborative AI workspace with multi-agent orchestration, streaming responses, and a custom vector search engine.',
-    stack: ['Next.js', 'Python', 'OpenAI', 'Pinecone', 'WebSocket'],
+    desc: 'Write winning Upwork proposals, LinkedIn InMails, connection notes, and cold emails in seconds. AI-powered outreach built for Pakistan. Free to start.',
+    stack: ['Next.js', 'SupaBase', 'OpenAI', 'PostgreSQL', 'Payment Integration'],
     image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1200&q=80',
     color: 'from-purple-600 to-fuchsia-500',
+    url: 'https://clientpitcher.com',
   },
   {
-    title: 'Quantum Commerce',
-    tag: 'E-Commerce',
-    desc: 'Headless commerce platform handling 10M+ requests/day with personalized recommendations and sub-100ms checkout.',
-    stack: ['React', 'Node.js', 'GraphQL', 'Redis', 'Stripe'],
+    title: 'Limo At Door',
+    tag: 'Chauffer Services',
+    desc: 'Online chauffeur service platform that allows users to book luxury rides, schedule pickups, and manage bookings with a smooth and user-friendly interface.',
+    stack: ['Livewire', 'Laravel', 'MySQL', 'Maps', 'API Integrations'],
     image: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=1200&q=80',
     color: 'from-cyan-500 to-blue-600',
+    url: 'https://limoatdoor.com',
   },
   {
-    title: 'HoloDeck DevTools',
-    tag: 'Developer Tool',
-    desc: 'Immersive 3D debugging environment for distributed systems, with live traces rendered as interactive spatial graphs.',
-    stack: ['Three.js', 'Rust', 'WebGL', 'gRPC'],
+    title: 'Tenx Media',
+    tag: 'Creativity',
+    desc: 'Video editing agency that helps coaches, CEOs, and personal brands grow their YouTube channels by creating high-quality, algorithm-optimized content.',
+    stack: ['Next.js', 'Tailwind CSS', 'Framer Motion', 'React Animation'],
     image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&q=80',
     color: 'from-violet-600 to-indigo-500',
+    url: 'https://tenxmedia.agency',
   },
   {
-    title: 'FinPulse Analytics',
-    tag: 'FinTech',
+    title: 'Prime Solutions',
+    tag: 'BPO Services',
     desc: 'Institutional-grade analytics dashboard processing streaming market data with custom time-series DB and ML predictions.',
-    stack: ['Next.js', 'Python', 'TimescaleDB', 'Kafka'],
+    stack: ['Next.js', 'Tailwind CSS', 'TypeScript', 'Framer Motion'],
     image: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1200&q=80',
     color: 'from-pink-500 to-purple-600',
+    url: 'https://primesolutionsbpo.com',
   },
   {
-    title: 'VoxelForge',
-    tag: 'Creative Tool',
-    desc: 'Browser-based collaborative voxel art editor with real-time sync, procedural generation, and one-click NFT minting.',
-    stack: ['React', 'Three.js', 'Yjs', 'Solidity'],
+    title: 'SabSaath',
+    tag: 'Charity Platform',
+    desc: 'Charity and community platform that enables users to support social causes, make donations, and stay connected with ongoing programs.',
+    stack: ['React', 'Laravel', 'Payment Integrations', 'MySQL', 'Blade', 'Real-time'],
     image: 'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=1200&q=80',
     color: 'from-emerald-500 to-cyan-500',
+    url: 'https://sabsaath.org',
   },
   {
-    title: 'Sentinel Cloud',
-    tag: 'DevOps Platform',
-    desc: 'Zero-config Kubernetes PaaS with auto-scaling, secrets management, and one-click preview deployments for every PR.',
-    stack: ['Go', 'Kubernetes', 'Terraform', 'React'],
+    title: 'Strata Link BMS',
+    tag: 'Management System',
+    desc: 'This Building management system is currently supporting 45+ buildings across Australia. Designed to streamline property operations, communication, and maintenance workflows for residential and commercial communities.',
+    stack: ['React', 'Laravel', 'MySQL', 'OpenAI', 'Saas'],
     image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80',
     color: 'from-amber-500 to-rose-500',
+    url: 'https://stratalinkbms.com.au',
   },
 ]
 
@@ -464,10 +470,10 @@ function App() {
             className="mt-8 flex flex-wrap justify-center gap-x-3 gap-y-2 text-sm md:text-base text-white/70 font-mono tracking-wider uppercase"
           >
             <span>Full Stack Developer</span>
-            <span className="text-purple-400">/</span>
+            <span className="text-white">/</span>
             <span>Software Engineer</span>
-            <span className="text-cyan-400">/</span>
-            <span>3D Web Architect</span>
+            {/* <span className="text-cyan-400">/</span> */}
+            {/* <span>3D Web Architect</span> */}
           </motion.div>
 
           <motion.p
@@ -510,9 +516,9 @@ function App() {
             className="mt-16 grid grid-cols-3 gap-6 md:gap-12 max-w-xl mx-auto"
           >
             {[
-              { n: '6+', l: 'Years exp.' },
-              { n: '40+', l: 'Projects shipped' },
-              { n: '12M+', l: 'Users served' },
+              { n: '4+', l: 'Years exp.' },
+              { n: '20+', l: 'Projects shipped' },
+              { n: '15+', l: 'Clients worked with' },
             ].map((s, i) => (
               <div key={i} className="text-center">
                 <div className="text-3xl md:text-4xl font-bold text-gradient">{s.n}</div>
@@ -555,16 +561,13 @@ function App() {
                   <Award className="w-10 h-10 text-purple-400 mb-4" />
                   <h3 className="text-2xl font-bold mb-4">Hello, I&apos;m Muneeb</h3>
                   <p className="text-white/70 leading-relaxed text-sm">
-                    A full-stack engineer with <span className="text-cyan-300 font-semibold">6+ years</span> shipping production systems
-                    for startups and Fortune 500s. I&apos;m obsessed with the craft — from architecting distributed
-                    backends to sweating the last pixel of a micro-interaction.
+                    A full-stack developer with <span className="text-cyan-300 font-semibold">4+ years</span> of experience building modern, scalable web applications. I focus on delivering clean UI, efficient backend logic, and smooth user experiences.
                   </p>
                   <p className="text-white/70 leading-relaxed text-sm mt-3">
-                    I speak fluent TypeScript and Python, dream in React, and spend weekends building generative art
-                    in WebGL.
+                    My tech stack includes JavaScript/TypeScript, Next.js, Laravel, Node.js, and many more with hands-on experience in API development, authentication systems, and deploying production-ready applications.
                   </p>
                   <div className="flex items-center gap-2 text-xs text-purple-300 mt-5 font-mono">
-                    <MapPin className="w-3.5 h-3.5" /> San Francisco, CA — Remote-friendly
+                    <MapPin className="w-3.5 h-3.5" /> Lahore, PK — Remote-friendly
                   </div>
                   <a
                     href="/resume.pdf"
@@ -923,12 +926,12 @@ function ProjectCard({ p, i }) {
           ))}
         </div>
         <div className="flex items-center gap-3 pt-2 border-t border-white/5">
-          <a href="#" className="text-xs text-cyan-300 hover:text-white flex items-center gap-1 font-mono cursor-hover">
-            <ExternalLink className="w-3.5 h-3.5" /> Live Demo
+          <a href={p.url} target="_blank" rel="noopener noreferrer" className="text-xs text-cyan-300 hover:text-white flex items-center gap-1 font-mono cursor-hover">
+            <ExternalLink className="w-3.5 h-3.5" /> Live Preview
           </a>
-          <a href="#" className="text-xs text-purple-300 hover:text-white flex items-center gap-1 font-mono cursor-hover">
+          {/* <a href="#" className="text-xs text-purple-300 hover:text-white flex items-center gap-1 font-mono cursor-hover">
             <Github className="w-3.5 h-3.5" /> Source
-          </a>
+          </a> */}
         </div>
       </div>
       {/* Neon border glow on hover */}
